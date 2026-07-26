@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Shift {
+  MORNING
+  AFTERNOON
+  NIGHT
+}
+
+/// A chatter (employee). `name` is the schedule/display name from the agency
+/// naming structure; `fullName` is the real name; `aliases` holds alternate
+/// spellings (comma-separated) so old spreadsheet names keep matching.
+model Chatter {
+  id              String   @id @default(cuid())
+  fullName        String   @default("")
+  /// Infloww/chatting name — the unique handle used on the schedule grid,
+  /// the roster, and the "ON SHIFT" pings.
+  name            String   @unique
+  /// What appears on the weekly posters. Editable; when blank it falls back
+  /// to the LX rule (alias for LX people, real first name otherwise).
+  posterName      String   @default("")
+  discordUsername String   @default("")
+  /// Numeric Discord user id (right-click a user -> Copy User ID). This is what
+  /// actually PINGS in the "ON SHIFT" and overdue alerts; the username above is
+  /// the readable fallback.
+  discordId       String   @default("")
+  color           String   @default("#8b7cff")
+  aliases         String   @default("")
+  /// LX-agency people: posters show their chatting `name` (alias). Everyone
+  /// else appears on posters under the first word of their real `fullName`.
+  isLX            Boolean  @default(false)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  assignments Assignment[]
+}
+
+/// A model/creator whose account is being covered (a row group on the old sheet).
+/// `webhookUrl` is the model's own Discord channel webhook — the weekly
+/// schedule poster image is sent there.
+model Creator {
+  id         String  @id @default(cuid())
+  name       String  @unique
+  active     Boolean @default(true)
+  sortOrder  Int     @default(0)
+  webhookUrl String  @default("")
+
+  assignments Assignment[]
+}
+
+/// One chatter covering one model for one shift on one day of a given week.
+/// `weekStart` is the ISO date (YYYY-MM-DD) of that week's Monday in
+/// Europe/Berlin; `day` is 0=Mon … 6=Sun.
+model Assignment {
+  id        String @id @default(cuid())
+  weekStart String
+  day       Int
+  shift     Shift
+  creatorId String
+  chatterId String
+
+  creator Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  chatter Chatter @relation(fields: [chatterId], references: [id], onDelete: Cascade)
+
+  @@unique([weekStart, day, shift, creatorId, chatterId])
+  @@index([weekStart])
+}
+
+model Setting {
+  key   String @id
+  value String
+}
+
+/// One row per Discord ping actually attempted. The unique (date, shift) pair
+/// is what makes the scheduler idempotent across restarts and replicas.
+model ShiftPingLog {
+  id      String   @id @default(cuid())
+  date    String
+  shift   Shift
+  sentAt  DateTime @default(now())
+  payload String
+  ok      Boolean  @default(true)
+  error   String   @default("")
+
+  @@unique([date, shift])
+}

@@ -1,0 +1,16 @@
+# deps / build
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# env — never commit secrets (webhook URLs, passwords, DB creds)
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store
+npm-debug.log*
+coverage/
