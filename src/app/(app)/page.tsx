@@ -43,17 +43,49 @@ export default async function SchedulePage({
     params.week && isValidISODate(params.week) ? weekStartOf(params.week) : thisWeek;
   const todayIdx = weekStart === thisWeek ? dayIndexOf(today.date) : -1;
 
-  const [creators, chatters, assignments, opstrack] = await Promise.all([
-    prisma.creator.findMany({ where: { active: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
-    prisma.chatter.findMany({ where: { active: true }, orderBy: { name: "asc" } }),
-    prisma.assignment.findMany({
-      where: { weekStart },
-      include: { chatter: true },
-      orderBy: { id: "asc" },
-    }),
-    // Avatars ride in from OpsTrack (mapped OnlyFansAPI accounts); {} when unmapped/offline.
-    creatorAccountsMap(),
-  ]);
+  let creators: Awaited<ReturnType<typeof prisma.creator.findMany>>;
+  let chatters: Awaited<ReturnType<typeof prisma.chatter.findMany>>;
+  let assignments: Awaited<
+    ReturnType<typeof prisma.assignment.findMany<{ include: { chatter: true } }>>
+  >;
+  let opstrack: Awaited<ReturnType<typeof creatorAccountsMap>>;
+  try {
+    [creators, chatters, assignments, opstrack] = await Promise.all([
+      prisma.creator.findMany({ where: { active: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
+      prisma.chatter.findMany({ where: { active: true }, orderBy: { name: "asc" } }),
+      prisma.assignment.findMany({
+        where: { weekStart },
+        include: { chatter: true },
+        orderBy: { id: "asc" },
+      }),
+      // Avatars ride in from OpsTrack (mapped OnlyFansAPI accounts); {} when unmapped/offline.
+      creatorAccountsMap(),
+    ]);
+  } catch (e) {
+    // TEMPORARY diagnostic: surface the real failure on-page instead of a 500,
+    // so the exact cause is visible without server logs.
+    const msg = e instanceof Error ? `${e.name}: ${e.message}\n\n${e.stack ?? ""}` : String(e);
+    return (
+      <div className="card" style={{ margin: 24 }}>
+        <h1 className="page-title">Schedule failed to load</h1>
+        <p className="muted">The page hit an error while loading data. Details:</p>
+        <pre
+          style={{
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+            fontSize: 12,
+            color: "#ffb3b3",
+            background: "#1b0f14",
+            padding: 12,
+            borderRadius: 8,
+            marginTop: 10,
+          }}
+        >
+          {msg}
+        </pre>
+      </div>
+    );
+  }
   const avatarMap = opstrack.map;
 
   const clipboard = parseWeekClipboard((await cookies()).get(WEEK_CLIPBOARD_COOKIE)?.value);
