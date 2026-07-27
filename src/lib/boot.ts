@@ -1,5 +1,5 @@
 import { prisma } from "./prisma";
-import { autoSeedIfEmpty } from "./seed";
+import { autoSeedIfEmpty, reconcileRoster } from "./seed";
 import { runShiftPing } from "./pings";
 import { pushRosterToOpstrack } from "./rosterPush";
 
@@ -17,6 +17,7 @@ export async function boot(): Promise<void> {
 
   try {
     await autoSeedIfEmpty(prisma);
+    await reconcileRoster(prisma);
   } catch (e) {
     console.error("aura-scheduler: auto-seed failed (is DATABASE_URL set and migrated?)", e);
   }

@@ -11,11 +11,11 @@
   --text: #f0eee9;
   --text-dim: #a9a5ad;
   --text-faint: #726e78;
-  --accent: #7d9bff;
-  --accent-bright: #a9bdff;
-  --accent-soft: #7d9bff24;
-  --glow-accent: #6082ff38;
-  --glow-violet: #7c4dff24;
+  --accent: #ff5fb2;
+  --accent-bright: #ff9ed0;
+  --accent-soft: #ff5fb226;
+  --glow-accent: #ff5fb23d;
+  --glow-violet: #ff5fb220;
   --danger: #e5484d;
   --ok: #55c88f;
   --btn-bg: #fff;
@@ -603,7 +603,7 @@ input[type="checkbox"] {
 
 .grid-table td.today {
   background: var(--accent-soft);
-  border-color: #7d9bff59;
+  border-color: #ff5fb259;
 }
 
 .grid-table td.shift-label {
@@ -686,7 +686,7 @@ input[type="checkbox"] {
 .cell-add select {
   width: auto;
   background: transparent;
-  border: 1px dashed #7d9bff40;
+  border: 1px dashed #ff5fb240;
   color: var(--text-faint);
   border-radius: 999px;
   padding: 3px 8px;
@@ -699,7 +699,7 @@ input[type="checkbox"] {
 
 .cell-add select:hover {
   color: var(--text-dim);
-  border-color: #7d9bff80;
+  border-color: #ff5fb280;
 }
 
 .cell-add select:focus {
@@ -1165,7 +1165,7 @@ input[type="checkbox"] {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  border: 1px dashed #7d9bff40;
+  border: 1px dashed #ff5fb240;
   border-radius: var(--radius-sm);
   padding: 8px 14px;
   font-size: 13px;
@@ -1179,7 +1179,7 @@ input[type="checkbox"] {
 }
 .add-collapse > summary:hover {
   color: var(--text);
-  border-color: #7d9bff80;
+  border-color: #ff5fb280;
 }
 .add-collapse[open] > summary {
   border-style: solid;

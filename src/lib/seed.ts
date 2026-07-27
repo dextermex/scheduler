@@ -85,3 +85,44 @@ export async function autoSeedIfEmpty(prisma: PrismaClient): Promise<boolean> {
   await seedDatabase(prisma);
   return true;
 }
+
+/**
+ * Run on every boot (idempotent): ensure the intended chatters exist, and remove
+ * the early placeholder scaffolding ("Chatter A".."Chatter D", "Creator One"/
+ * "Creator Two") that shipped before the real roster. Only ever touches those
+ * exact placeholder names, so real data added in the app stays untouched.
+ */
+export async function reconcileRoster(prisma: PrismaClient): Promise<void> {
+  for (const c of SEED_CHATTERS) {
+    await prisma.chatter.upsert({
+      where: { name: c.name },
+      update: {},
+      create: {
+        name: c.name,
+        fullName: c.fullName,
+        posterName: c.lx ? c.name : c.fullName.trim().split(/\s+/)[0] || c.name,
+        color: c.color,
+        aliases: (c.aliases ?? []).join(","),
+        isLX: c.lx ?? false,
+      },
+    });
+  }
+
+  const placeholderChatters = ["Chatter A", "Chatter B", "Chatter C", "Chatter D"];
+  const placeholderCreators = ["Creator One", "Creator Two"];
+  const [phC, phCr] = await Promise.all([
+    prisma.chatter.findMany({ where: { name: { in: placeholderChatters } }, select: { id: true } }),
+    prisma.creator.findMany({ where: { name: { in: placeholderCreators } }, select: { id: true } }),
+  ]);
+  const chatterIds = phC.map((x) => x.id);
+  const creatorIds = phCr.map((x) => x.id);
+  if (chatterIds.length === 0 && creatorIds.length === 0) return;
+
+  const orClauses: object[] = [];
+  if (chatterIds.length) orClauses.push({ chatterId: { in: chatterIds } });
+  if (creatorIds.length) orClauses.push({ creatorId: { in: creatorIds } });
+  await prisma.assignment.deleteMany({ where: { OR: orClauses } });
+  if (chatterIds.length) await prisma.chatter.deleteMany({ where: { id: { in: chatterIds } } });
+  if (creatorIds.length) await prisma.creator.deleteMany({ where: { id: { in: creatorIds } } });
+  console.log("aura-scheduler: reconciled roster (ensured chatters, removed placeholders)");
+}

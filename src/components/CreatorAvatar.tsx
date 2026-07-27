@@ -34,8 +34,8 @@ export function CreatorAvatar({
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "rgba(139, 124, 255, 0.18)",
-          color: "#b6aaff",
+          background: "rgba(255, 95, 178, 0.18)",
+          color: "#ff9ed0",
           fontSize: Math.max(11, Math.round(size * 0.42)),
           fontWeight: 700,
         }}
