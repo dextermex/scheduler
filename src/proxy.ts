@@ -7,7 +7,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { isValidSessionToken, SESSION_COOKIE } from "@/lib/auth";
 
-const PUBLIC_PREFIXES = ["/login", "/api/health", "/api/cron", "/api/models", "/api/sso"];
+const PUBLIC_PREFIXES = ["/login", "/api/health", "/api/cron", "/api/models", "/api/sso", "/api/diag"];
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
