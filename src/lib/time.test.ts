@@ -34,23 +34,26 @@ describe("dayIndexOf", () => {
 
 describe("shift boundaries", () => {
   it("matches the three ping hours", () => {
-    expect(shiftStartingAtHour(4)).toBe("MORNING");
-    expect(shiftStartingAtHour(12)).toBe("AFTERNOON");
-    expect(shiftStartingAtHour(20)).toBe("NIGHT");
-    expect(shiftStartingAtHour(5)).toBeNull();
-    expect(shiftStartingAtHour(0)).toBeNull();
+    expect(shiftStartingAtHour(0)).toBe("MORNING");
+    expect(shiftStartingAtHour(8)).toBe("AFTERNOON");
+    expect(shiftStartingAtHour(16)).toBe("NIGHT");
+    expect(shiftStartingAtHour(4)).toBeNull();
+    expect(shiftStartingAtHour(20)).toBeNull();
   });
 
-  it("assigns 0–3h to the previous day's night block", () => {
-    expect(shiftContainingHour(2)).toEqual({ shift: "NIGHT", previousDay: true });
-    expect(shiftContainingHour(4)).toEqual({ shift: "MORNING", previousDay: false });
+  it("maps every hour to a same-day block — no shift crosses midnight", () => {
+    expect(shiftContainingHour(0)).toEqual({ shift: "MORNING", previousDay: false });
+    expect(shiftContainingHour(7)).toEqual({ shift: "MORNING", previousDay: false });
+    expect(shiftContainingHour(8)).toEqual({ shift: "AFTERNOON", previousDay: false });
+    expect(shiftContainingHour(15)).toEqual({ shift: "AFTERNOON", previousDay: false });
+    expect(shiftContainingHour(16)).toEqual({ shift: "NIGHT", previousDay: false });
     expect(shiftContainingHour(23)).toEqual({ shift: "NIGHT", previousDay: false });
   });
 });
 
 describe("berlinNow", () => {
   it("converts UTC to Berlin summer time (CEST, UTC+2)", () => {
-    // 02:00 UTC on 13 Jul 2026 = 04:00 in Berlin (DST) — the morning ping moment.
+    // 02:00 UTC on 13 Jul 2026 = 04:00 in Berlin (DST, UTC+2).
     const t = berlinNow(new Date("2026-07-13T02:00:00Z"));
     expect(t).toEqual({ date: "2026-07-13", hour: 4, minute: 0 });
   });

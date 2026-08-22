@@ -81,7 +81,7 @@ export default async function SchedulePage({
           <h1 className="page-title">Weekly Schedule</h1>
           <p className="page-sub">
             One slot = one 8h block. Add several chatters to a slot for shared coverage. Discord is
-            pinged automatically at 04:00, 12:00 and 20:00 (Europe/Berlin).
+            pinged automatically at 00:00, 08:00 and 16:00 (Europe/Berlin).
           </p>
         </div>
         <div className="week-nav">

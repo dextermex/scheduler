@@ -7,9 +7,9 @@ rebranded for AURA; the original agency's real roster was not carried over (plac
 seed only).
 
 ## What it does
-- **Weekly schedule** — a grid per creator: Morning (04:00–12:00), Afternoon (12:00–20:00),
-  Night (20:00–04:00) × seven days. Multiple chatters per slot. "Copy previous week" in one click.
-- **Discord shift pings** — at 04:00 / 12:00 / 20:00 Europe/Berlin it posts the on-shift list
+- **Weekly schedule** — a grid per creator: Morning (00:00–08:00), Afternoon (08:00–16:00),
+  Night (16:00–00:00) × seven days. Multiple chatters per slot. "Copy previous week" in one click.
+- **Discord shift pings** — at 00:00 / 08:00 / 16:00 Europe/Berlin it posts the on-shift list
   to the configured webhook. Built-in scheduler (no external cron); `/api/cron/shift-ping` is a fallback.
 - **Poster view** — a dark, print-ready weekly schedule per creator.
 - **Chatters & Models** — roster (real name → chatter name → Discord username → color) and creators.

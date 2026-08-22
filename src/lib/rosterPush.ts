@@ -10,8 +10,8 @@ import {
 } from "./time";
 
 /** Who is on shift RIGHT NOW, per creator id: [{name, discordUsername}]. Uses the
- * shift containing the current Berlin hour (night rolls back to the previous
- * day's row) and the same latest-week fallback the "ON SHIFT" pings use. */
+ * shift containing the current Berlin hour and the same latest-week fallback
+ * the "ON SHIFT" pings use. */
 async function onShiftByCreator(): Promise<
   Record<string, { name: string; discordUsername: string; discordId: string; office: boolean }[]>
 > {

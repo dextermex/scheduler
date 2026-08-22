@@ -8,7 +8,7 @@ const g = globalThis as unknown as { __hvBooted?: boolean };
 /**
  * Runs once per server process (from instrumentation.ts): seeds a brand-new
  * database and starts the minute ticker that fires the Discord shift pings at
- * 04:00 / 12:00 / 20:00 Europe/Berlin. The DB claim in runShiftPing keeps this
+ * 00:00 / 08:00 / 16:00 Europe/Berlin. The DB claim in runShiftPing keeps this
  * idempotent even if several instances run.
  */
 export async function boot(): Promise<void> {
@@ -27,7 +27,7 @@ export async function boot(): Promise<void> {
   };
   tick(); // catch up immediately if we restarted inside a boundary hour
   setInterval(tick, 60_000);
-  console.log("aura-scheduler: shift-ping worker started (04:00/12:00/20:00 Europe/Berlin)");
+  console.log("aura-scheduler: shift-ping worker started (00:00/08:00/16:00 Europe/Berlin)");
 
   // Roster push to OpsTrack — every minute + immediately on boot (see
   // lib/rosterPush.ts for why we push instead of letting OpsTrack pull). Log

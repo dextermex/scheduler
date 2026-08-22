@@ -29,7 +29,7 @@ password, and you're on the schedule.
 ## 4. Wire up Discord
 
 Either set `DISCORD_WEBHOOK_URL` above, or open **/settings**, paste the webhook URL, save, and
-hit **Send test message**. Automatic pings then go out at 04:00, 12:00 and 20:00 Europe/Berlin —
+hit **Send test message**. Automatic pings then go out at 00:00, 08:00 and 16:00 Europe/Berlin —
 no extra cron needed, the scheduler runs inside the app. Every ping (or failure) shows up in the
 log on the same page.
 

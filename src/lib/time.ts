@@ -1,6 +1,6 @@
 /**
  * All schedule times live in Europe/Berlin ("CEST" as the team calls it).
- * Shifts: Morning 04:00–12:00, Afternoon 12:00–20:00, Night 20:00–04:00.
+ * Shifts: Morning 00:00–08:00, Afternoon 08:00–16:00, Night 16:00–00:00.
  * Weeks start on Monday; `weekStart` keys are the Monday's ISO date (YYYY-MM-DD).
  */
 
@@ -12,9 +12,9 @@ export const SHIFT_INFO: Record<
   ShiftKey,
   { label: string; start: string; end: string; short: string; startHour: number }
 > = {
-  MORNING: { label: "Morning", start: "04:00", end: "12:00", short: "04 — 12", startHour: 4 },
-  AFTERNOON: { label: "Afternoon", start: "12:00", end: "20:00", short: "12 — 20", startHour: 12 },
-  NIGHT: { label: "Night", start: "20:00", end: "04:00", short: "20 — 04", startHour: 20 },
+  MORNING: { label: "Morning", start: "00:00", end: "08:00", short: "00 — 08", startHour: 0 },
+  AFTERNOON: { label: "Afternoon", start: "08:00", end: "16:00", short: "08 — 16", startHour: 8 },
+  NIGHT: { label: "Night", start: "16:00", end: "00:00", short: "16 — 00", startHour: 16 },
 };
 
 /** Grid-only decoration — the Discord pings and posters keep plain labels. */
@@ -77,18 +77,17 @@ export function berlinNow(d: Date = new Date()): BerlinTime {
 
 /** Shift that STARTS exactly at this hour, or null. */
 export function shiftStartingAtHour(hour: number): ShiftKey | null {
-  if (hour === 4) return "MORNING";
-  if (hour === 12) return "AFTERNOON";
-  if (hour === 20) return "NIGHT";
+  if (hour === 0) return "MORNING";
+  if (hour === 8) return "AFTERNOON";
+  if (hour === 16) return "NIGHT";
   return null;
 }
 
-/** Shift whose time block CONTAINS this hour. Hours 0–3 belong to the previous day's night shift. */
+/** Shift whose time block CONTAINS this hour. No block crosses midnight, so `previousDay` stays false. */
 export function shiftContainingHour(hour: number): { shift: ShiftKey; previousDay: boolean } {
-  if (hour >= 4 && hour < 12) return { shift: "MORNING", previousDay: false };
-  if (hour >= 12 && hour < 20) return { shift: "AFTERNOON", previousDay: false };
-  if (hour >= 20) return { shift: "NIGHT", previousDay: false };
-  return { shift: "NIGHT", previousDay: true };
+  if (hour < 8) return { shift: "MORNING", previousDay: false };
+  if (hour < 16) return { shift: "AFTERNOON", previousDay: false };
+  return { shift: "NIGHT", previousDay: false };
 }
 
 export function addDaysISO(iso: string, days: number): string {

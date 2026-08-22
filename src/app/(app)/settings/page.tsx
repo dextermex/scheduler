@@ -56,7 +56,7 @@ export default async function SettingsPage({
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
             <label className="inline-form" style={{ cursor: "pointer" }}>
               <input type="checkbox" name="pingsEnabled" defaultChecked={pingsEnabled} />
-              Send automatic pings at shift start (04:00 / 12:00 / 20:00)
+              Send automatic pings at shift start (00:00 / 08:00 / 16:00)
             </label>
             <label className="inline-form" style={{ cursor: "pointer" }}>
               <input type="checkbox" name="fallbackToLatestWeek" defaultChecked={fallback} />
@@ -89,7 +89,7 @@ export default async function SettingsPage({
         <div className="card-title">Recent automatic pings</div>
         {logs.length === 0 ? (
           <p className="muted">
-            Nothing yet — the first ping goes out at the next shift boundary (04:00, 12:00 or 20:00
+            Nothing yet — the first ping goes out at the next shift boundary (00:00, 08:00 or 16:00
             Berlin time).
           </p>
         ) : (
